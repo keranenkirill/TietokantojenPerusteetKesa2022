@@ -1,0 +1,50 @@
+-- SQLit --
+-----------  
+   
+   
+   --HAKEE KÄYTTÄJÄN AJAMAN KOKONAISMATKAN--
+-- SELECT Users.name, SUM(Trips.distance) ajettu_kokonaismatka
+-- FROM Users, Trips
+-- WHERE Users.name = "user123" AND Trips.user_id = Users.id;
+
+
+
+   --HAKEE KÄYTTÄJÄN KÄYTTÄMÄN AJAN KAIKKIIN MATKOIHINSA--
+-- SELECT Users.name, SUM(Trips.duration) kokonaismatkan_aika
+-- FROM Users, Trips
+-- WHERE Users.name = "user123" AND Trips.user_id = Users.id; 
+
+
+
+   --ilmoittaa jokaisesta kaupungista, kauanko pyörillä ajettiin annettuna päivänä-- 
+   --yhdistävänä tekijänä on Bikes taulu,  sillä pyörät on "rekisteröity" kaupunkikohtaisesti--
+-- SELECT Cities.name, SUM(Trips.duration) 
+-- FROM Cities, Trips, Bikes 
+-- WHERE Trips.bike_id = Bikes.id 
+-- AND Bikes.city_id = Cities.id 
+-- AND Trips.day= "2021-06-01"
+-- GROUP BY Cities.name
+
+
+
+   --ilmoittaa, montako eri käyttäjää pyörillä on ollut annetussa kaupungissa--
+   --tässä emme käytä Users-taulua, sillä user_id on löydettävissä Trips-taulusta,
+   --  joten riittänee kyselyä rajoittaa taas yhdistävään tekijään kuten yllä eli Bikes-taulun mukaan--
+--SELECT COUNT(DISTINCT Trips.user_id)
+--FROM Trips, Bikes, Cities
+--WHERE Trips.bike_id = Bikes.id AND Bikes.city_id = Cities.id AND Cities.name = "city5" 
+
+
+
+   --ilmoittaa jokaisesta päivästä, montako matkaa kyseisenä päivänä on ajettu--
+   --Tässä aika selväää on, että käytämme yhdistävänä tauluna todettua Bikes-taulua,
+   --  lisäksi Trips-taulu on tärkeä, sillä saadaan ryhmiteltyä päivien mukaan 
+--SELECT Trips.day, COUNT(Trips.duration)
+--FROM Trips, Cities, Bikes
+--WHERE Bikes.id = Trips.bike_id AND Cities.id = Bikes.city_id AND Cities.name ="city5" GROUP BY Trips.day;
+
+
+
+SELECT Cities.name, Stops.name, COUNT(Trips.id) AS lahtojen_maara
+FROM Stops, Cities, Trips
+WHERE Cities.id = Stops.city_id  AND Stops.id = Trips.from_id AND Cities.name = "city5" GROUP BY Trips.from_id ORDER BY lahtojen_maara DESC
