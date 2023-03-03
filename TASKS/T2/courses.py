@@ -4,7 +4,7 @@ import sqlite3
 try:
    # poistaa tietokannan alussa (kätevä moduulin testailussa)
    os.remove("TASKS/T2/courses.db")
-   print("TIETOKANTA POISTETTU ONNISTUNEESTI")
+   #print("TIETOKANTA POISTETTU ONNISTUNEESTI")
 except:
    # mikäli tietokantaa ei ollut vielä olemassa, niin exceptionilla virheviesti
    print("TIETOKANTAA EI VOITU POISTAA, SILLÄ SE EI OLE OLEMASSA")
@@ -12,7 +12,7 @@ except:
 try:
    db = sqlite3.connect("TASKS/T2/courses.db")
    db.isolation_level = None  
-   print("TIETOKANTA LUOTU ONNISTUNEESTI")
+   #print("TIETOKANTA LUOTU ONNISTUNEESTI")
 except:
    print("TIETOKANNAN UUDELLEENLUOMISESSA ONGELMIA")
 
@@ -41,7 +41,7 @@ def create_teacher(name):
    try:
       db.execute("INSERT INTO Opettajat (nimi) VALUES (?)", [name])
       opettajan_id = db.execute("SELECT Opettajat.id FROM Opettajat WHERE Opettajat.nimi =?", [name]).fetchone()
-      print("LISÄTTY ONNISTUNEESTI OPETTAJA:", name, " id:", opettajan_id[0])
+      #print("LISÄTTY ONNISTUNEESTI OPETTAJA:", name, " id:", opettajan_id[0])
       return opettajan_id[0]
    except:
       print("OPETTAJAN LISÄÄMISESSÄ TAULUUN ILMENNYT ONGELMA")
@@ -56,7 +56,6 @@ def create_course(name, credits, teacher_ids):
    
    lisatyn_kurssin_id = db.execute("SELECT Kurssit.id FROM Kurssit WHERE Kurssit.nimi =?", [name]).fetchone()
    #print("lisätyn kurssin id: ",lisatyn_kurssin_id)
-   print()
    for opettaja_id in teacher_ids:
       db.execute("INSERT INTO KurssinOpettajat (kurssi_id, opettaja_id) VALUES (?, ?)", [lisatyn_kurssin_id[0], opettaja_id])
    
@@ -67,7 +66,6 @@ def create_course(name, credits, teacher_ids):
 def create_student(name):
    #print("lisättävän opiskelijan nimi:", name)
    db.execute("INSERT INTO Opiskelijat (nimi) VALUES (?)", [name])
-   print()
     
    lisatyn_opiskelijan_id = db.execute("SELECT Opiskelijat.id FROM Opiskelijat WHERE Opiskelijat.nimi =?", [name]).fetchone()
    return lisatyn_opiskelijan_id[0]
@@ -78,7 +76,6 @@ def add_credits(student_id, course_id, date, grade):
    #print(student_id, course_id,  date,grade)
    db.execute("INSERT INTO Suoritukset (oppilas_id, kurssi_id, paiva, arvosana) VALUES (?, ?, ?, ?)", [student_id, course_id, date, grade])
    #print("lisätty suoritus opiskelijalle (id):", student_id, " kurssina (id):", course_id, " päiväyksenä:", date, " arvosanalla:", grade)
-   print()
 
 
 # lisää ryhmän tietokantaan
@@ -101,7 +98,6 @@ def courses_by_teacher(teacher_name):
     tulos_lista =[]
     for kurssi in kurssilista:
        tulos_lista.append(kurssi[0])
-    print()
     return tulos_lista
 
 
@@ -109,14 +105,12 @@ def courses_by_teacher(teacher_name):
 def credits_by_teacher(teacher_name):
     kurssien_maara = db.execute("SELECT COUNT(Suoritukset.kurssi_id) FROM Suoritukset, KurssinOpettajat, Opettajat WHERE Suoritukset.kurssi_id = KurssinOpettajat.kurssi_id AND KurssinOpettajat.opettaja_id  = Opettajat.id AND Opettajat.nimi =?;", [teacher_name]).fetchone()
     kurssipisteiden_maara = kurssien_maara[0] * 5
-    print()
     return kurssipisteiden_maara
 
 
 # hakee opiskelijan suorittamat kurssit arvosanoineen (aakkosjärjestyksessä)
 def courses_by_student(student_name):
     kurssit_arvosanoineen = db.execute("SELECT Kurssit.nimi, Suoritukset.arvosana FROM Kurssit, Suoritukset, Opiskelijat WHERE Kurssit.id = Suoritukset.kurssi_id AND Opiskelijat.id = Suoritukset.oppilas_id AND Opiskelijat.nimi =? ORDER BY Kurssit.nimi;", [student_name]).fetchall()
-    print()
     return kurssit_arvosanoineen 
  
  
@@ -127,7 +121,6 @@ def credits_by_year(year):
     opintopisteiden_maara = db.execute("SELECT COUNT(Suoritukset.kurssi_id) FROM Suoritukset WHERE Suoritukset.paiva LIKE '%' || ? || '%';", [year]).fetchone()
     #print (opintopisteiden_maara[0])
     opintopisteiden_maara = opintopisteiden_maara[0]*5
-    print()
     return opintopisteiden_maara
     
     
@@ -141,14 +134,12 @@ def grade_distribution(course_name):
     
     for i in tulos_lista:       
        arvosana_parit[i[0]] = i[1]
-    print()   
     return arvosana_parit
 
              
 # hakee listan kursseista (nimi, opettajien määrä, suorittajien määrä) (aakkosjärjestyksessä)
 def course_list():
     tulos_taulu = db.execute("SELECT Kurssit.nimi, COUNT(DISTINCT KurssinOpettajat.opettaja_id), COUNT(DISTINCT Suoritukset.oppilas_id) FROM Opettajat, Opiskelijat, Kurssit LEFT JOIN KurssinOpettajat ON  Kurssit.id = KurssinOpettajat.kurssi_id LEFT JOIN Suoritukset ON Kurssit.id = Suoritukset.kurssi_id GROUP BY Kurssit.id;").fetchall()
-    print()
     return tulos_taulu
  
  
@@ -175,7 +166,6 @@ def teacher_list():
       opetuple = tuple(tupl)
 
       ope_kurssi_list.append(opetuple)
-   print()
    return ope_kurssi_list
    
 
@@ -195,7 +185,6 @@ def group_people(group_name):
        ryhman_jasenet.append(opettaja[0])
 
     ryhman_jasenet.sort()
-    print()
     return ryhman_jasenet
 
 # hakee ryhmissä saatujen opintopisteiden määrät (aakkosjärjestyksessä)
@@ -216,7 +205,6 @@ def credits_in_groups():
        ryhma_tuple = tuple(tupl)
        
        tulos_lista.append(ryhma_tuple)
-    print()
     return tulos_lista
 
 # hakee ryhmät, joissa on tietty opettaja ja opiskelija (aakkosjärjestyksessä)
@@ -226,5 +214,4 @@ def common_groups(teacher_name, student_name):
     for tulos in tulos_lista:
        refact_lista.append(tulos[0])
    
-    print()
     return refact_lista
