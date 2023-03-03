@@ -49,7 +49,7 @@ def create_teacher(name):
         
 # lisää kurssin tietokantaan
 def create_course(name, credits, teacher_ids):
-   print( "lisättävän opettajan/opettajien id:t ", teacher_ids)
+   #print( "lisättävän opettajan/opettajien id:t ", teacher_ids)
    
    db.execute("INSERT INTO Kurssit (nimi, opintopisteet) VALUES (?,?)", [name, credits])
    #print("lisätty kurssi:", name," sen opintopisteet:", credits )
@@ -65,7 +65,7 @@ def create_course(name, credits, teacher_ids):
            
 # lisää opiskelijan tietokantaan
 def create_student(name):
-   print("lisättävän opiskelijan nimi:", name)
+   #print("lisättävän opiskelijan nimi:", name)
    db.execute("INSERT INTO Opiskelijat (nimi) VALUES (?)", [name])
    print()
     
