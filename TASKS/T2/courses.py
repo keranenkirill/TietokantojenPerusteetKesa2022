@@ -221,4 +221,10 @@ def credits_in_groups():
 
 # hakee ryhmät, joissa on tietty opettaja ja opiskelija (aakkosjärjestyksessä)
 def common_groups(teacher_name, student_name):
-    pass
+    tulos_lista = db.execute("SELECT Ryhmat.nimi FROM Ryhmat, Ryhmat_opettaja_jasen, Ryhmat_oppilas_jasen, Opettajat, Opiskelijat WHERE Opiskelijat.id = Ryhmat_oppilas_jasen.oppilas_id AND Ryhmat.id = Ryhmat_oppilas_jasen.ryhma_id AND Opettajat.id = Ryhmat_opettaja_jasen.opettaja_id AND Ryhmat.id = Ryhmat_opettaja_jasen.ryhma_id AND Opettajat.nimi =? AND Opiskelijat.nimi =?;", [teacher_name, student_name]).fetchall()
+    refact_lista =[]
+    for tulos in tulos_lista:
+       refact_lista.append(tulos[0])
+   
+    print()
+    return refact_lista
