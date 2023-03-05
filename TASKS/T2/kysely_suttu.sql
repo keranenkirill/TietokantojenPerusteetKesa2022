@@ -1,7 +1,7 @@
 -- SQLite
 
 
-.schema
+
 
 -- SELECT * FROM KurssinOpettajat;
 -- SELECT * FROM Kurssit;
