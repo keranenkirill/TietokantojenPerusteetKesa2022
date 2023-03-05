@@ -57,15 +57,15 @@
 
 
 
-SELECT Kurssit.nimi, 
-      COUNT(DISTINCT KurssinOpettajat.opettaja_id), 
-      COUNT(DISTINCT Suoritukset.oppilas_id)
-FROM Opettajat, Opiskelijat, Kurssit 
-      LEFT JOIN KurssinOpettajat 
-            ON  Kurssit.id = KurssinOpettajat.kurssi_id 
-      LEFT JOIN Suoritukset 
-            ON Kurssit.id = Suoritukset.kurssi_id
-GROUP BY Kurssit.id;
+--SELECT Kurssit.nimi, 
+ --     COUNT(DISTINCT KurssinOpettajat.opettaja_id), 
+  --    COUNT(DISTINCT Suoritukset.oppilas_id)
+--FROM Opettajat, Opiskelijat, Kurssit 
+ --     LEFT JOIN KurssinOpettajat 
+ --           ON  Kurssit.id = KurssinOpettajat.kurssi_id 
+ --     LEFT JOIN Suoritukset 
+ --           ON Kurssit.id = Suoritukset.kurssi_id
+--GROUP BY Kurssit.id;
 
 
 --SELECT Opettajat.id
@@ -76,22 +76,27 @@ GROUP BY Kurssit.id;
 --FROM Opettajat, Kurssit, KurssinOpettajat
 --WHERE Opettajat.id = KurssinOpettajat.opettaja_id AND Kurssit.id = KurssinOpettajat.kurssi_id AND Opettajat.id =1 ;
 
-SELECT * FROM Ryhmat_oppilas_jasen;
+--SELECT * FROM Ryhmat_oppilas_jasen;
 SELECT * FROM Suoritukset ;
 SELECT * FROM Opiskelijat ;
 SELECT * FROM Kurssit ;
+SELECT * FROM Opettajat;
 
 
-SELECT nimi FROM Ryhmat GROUP BY nimi;
-SELECT Suoritukset.oppilas_id
-FROM Suoritukset, Opiskelijat, Kurssit, Ryhmat_oppilas_jasen, Ryhmat
-WHERE Opiskelijat.id = Suoritukset.oppilas_id 
-      AND Ryhmat_oppilas_jasen.oppilas_id = Opiskelijat.id 
-      AND Ryhmat_oppilas_jasen.ryhma_id = Ryhmat.id 
-      AND Suoritukset.kurssi_id = Kurssit.id 
-      AND Ryhmat.nimi ="Basic-koodarit";
+--SELECT nimi FROM Ryhmat GROUP BY nimi;
+--SELECT Suoritukset.oppilas_id
+--FROM Suoritukset, Opiskelijat, Kurssit, Ryhmat_oppilas_jasen, Ryhmat
+--WHERE Opiskelijat.id = Suoritukset.oppilas_id 
+      --AND Ryhmat_oppilas_jasen.oppilas_id = Opiskelijat.id 
+      --AND Ryhmat_oppilas_jasen.ryhma_id = Ryhmat.id 
+      --AND Suoritukset.kurssi_id = Kurssit.id 
+      --AND Ryhmat.nimi ="Basic-koodarit";
 
+SELECT Suoritukset.kurssi_id FROM Suoritukset, KurssinOpettajat, Opettajat WHERE Suoritukset.kurssi_id = KurssinOpettajat.kurssi_id AND KurssinOpettajat.opettaja_id  = Opettajat.id AND Opettajat.nimi = "Leena Salmela";
 
+SELECT Kurssit.opintopisteet 
+FROM Kurssit
+WHERE Kurssit.id BETWEEN 2 AND 3 ;
 
 
 
