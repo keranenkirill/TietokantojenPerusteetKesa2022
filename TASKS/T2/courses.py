@@ -1,5 +1,6 @@
 import os
 import sqlite3
+import math
 
 try:
    # poistaa tietokannan alussa (kätevä moduulin testailussa)
@@ -103,9 +104,15 @@ def courses_by_teacher(teacher_name):
 
 # hakee opettajan antamien opintopisteiden määrän
 def credits_by_teacher(teacher_name):
-    kurssien_maara = db.execute("SELECT COUNT(Suoritukset.kurssi_id) FROM Suoritukset, KurssinOpettajat, Opettajat WHERE Suoritukset.kurssi_id = KurssinOpettajat.kurssi_id AND KurssinOpettajat.opettaja_id  = Opettajat.id AND Opettajat.nimi =?;", [teacher_name]).fetchone()
-    kurssipisteiden_maara = kurssien_maara[0] * 5
-    return kurssipisteiden_maara
+    kurssien_id_lista = db.execute("SELECT Suoritukset.kurssi_id FROM Suoritukset, KurssinOpettajat, Opettajat WHERE Suoritukset.kurssi_id = KurssinOpettajat.kurssi_id AND KurssinOpettajat.opettaja_id  = Opettajat.id AND Opettajat.nimi =?;", [teacher_name]).fetchall()
+    kurssi_arvosana_lista =[]
+    for id in kurssien_id_lista:
+       arvosana = db.execute("SELECT Kurssit.opintopisteet FROM Kurssit WHERE Kurssit.id =?;", [id[0]]).fetchone()
+       #print(arvosana[0])
+       kurssi_arvosana_lista.append(arvosana[0])
+    kurssipisteet_sum = sum(kurssi_arvosana_lista)
+    
+    return kurssipisteet_sum 
 
 
 # hakee opiskelijan suorittamat kurssit arvosanoineen (aakkosjärjestyksessä)
@@ -117,11 +124,14 @@ def courses_by_student(student_name):
 # hakee tiettynä vuonna saatujen opintopisteiden määrän
 def credits_by_year(year):
     #tässä oli dotettu olevan monta eri tapaa toeuttaa %%-kohdassa
-    #opintopisteiden_maara = db.execute("SELECT Suoritukset.kurssi_id, Suoritukset.paiva FROM Suoritukset;").fetchall()
-    opintopisteiden_maara = db.execute("SELECT COUNT(Suoritukset.kurssi_id) FROM Suoritukset WHERE Suoritukset.paiva LIKE '%' || ? || '%';", [year]).fetchone()
-    #print (opintopisteiden_maara[0])
-    opintopisteiden_maara = opintopisteiden_maara[0]*5
-    return opintopisteiden_maara
+    kurssien_id_lista = db.execute("SELECT Suoritukset.kurssi_id FROM Suoritukset WHERE Suoritukset.paiva LIKE '%' || ? || '%';", [year]).fetchall()
+    kurssi_arvosana_lista =[]
+    for id in kurssien_id_lista:
+       arvosana = db.execute("SELECT Kurssit.opintopisteet FROM Kurssit WHERE Kurssit.id =?;", [id[0]]).fetchone()
+       #print(arvosana[0])
+       kurssi_arvosana_lista.append(arvosana[0])
+    kurssipisteet_sum = sum(kurssi_arvosana_lista)
+    return kurssipisteet_sum
     
     
 # hakee kurssin arvosanojen jakauman (järjestyksessä arvosanat 1-5)

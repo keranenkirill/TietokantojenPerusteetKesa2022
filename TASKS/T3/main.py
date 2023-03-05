@@ -1,0 +1,49 @@
+import sqlite3
+import random
+import time
+
+db = sqlite3.connect("TASKS\T3\LeffaKirjasto.db")
+db.isolation_level = None
+
+
+def luoLeffakirjasto():
+    db.execute("CREATE TABLE Elokuvat (id INTEGER PRIMARY KEY, nimi TEXT, vuosi INTEGER)")
+
+
+def kys_tehost_idx():
+   db.execute("CREATE INDEX idx_vuosi ON Elokuvat (vuosi);")
+
+
+def lisaa_elokuvia_kirjastoon():
+    db.execute("BEGIN")
+    start_time1 = time.time()
+    
+    for i in range(1,1000000+1):
+        vuosi = random.randint(1900, 2000)
+        db.execute("INSERT INTO Elokuvat (nimi, vuosi) VALUES (?,?)", ["elokuva_"+str(i),vuosi])
+    db.execute("COMMIT")
+    #print("rivien lisäämiseen kulunut aika:--- %s seconds ---" % (time.time() - start_time1))
+    print("%s" %(time.time() - start_time1))
+
+
+
+def hae_tuhat_kertaa_elokuvien_vuodet():
+    db.execute("BEGIN") 
+    start_time2 = time.time()
+    
+    for i in range(1,1000+1):
+        vuosi = random.randint(1900, 2000)
+        tulostaulu = db.execute("SELECT COUNT(vuosi) FROM Elokuvat WHERE vuosi =?;", [vuosi]).fetchall()
+    db.execute("COMMIT")
+    #print("tuhannen kyselyn suorittemiseen kulunut aika:--- %s seconds ---" % (time.time() - start_time2))
+    #return tulostaulu
+    print("%s" %(time.time() - start_time2))
+
+
+
+luoLeffakirjasto()
+
+lisaa_elokuvia_kirjastoon()
+
+kys_tehost_idx()
+hae_tuhat_kertaa_elokuvien_vuodet()
